@@ -28,19 +28,19 @@
     </style>
 </head>
 <body>
-    <h2>Get Rewards</h2>
+    <h2>Earn Money</h2>
     
     <!-- Reward Options -->
     <button class="btn reward-btn" onclick="showRewardedAd()">
-        🎁 Get 2x Booster
+        EarN 5 Taka By Bkash
     </button>
     
     <button class="btn reward-btn" onclick="showContinueAd()">
-        🔄 Get Extra Life
+        Earn 10 Taka on NOGOD
     </button>
     
     <button class="btn reward-btn" onclick="showCurrencyAd()">
-        💰 Earn 50 Coins
+        Free Mobail Recharge
     </button>
 
     <script>
@@ -72,13 +72,7 @@
             }).catch(handleAdError);
         }
 
-        // Reward Handler
-        function grantReward(type, amount = 1) {
-            const rewards = {
-                booster: "2x multiplier activated for 1 hour!",
-                extra_life: "You got 1 extra life!",
-                coins: `+${amount} coins added to your balance!`
-            };
+     
             
             alert(rewards[type]);
             
