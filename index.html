@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetag Ad Controller</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .ad-container {
+            margin-top: 30px;
+            min-height: 100px;
+            border: 1px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            display: none;
+        }
+        
+        .loading {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monetag Ad Controller</h1>
+        <p>Press the button below to show ads</p>
+        
+        <button id="showAdBtn" class="btn">Show Ads</button>
+        
+        <div id="adContainer" class="ad-container">
+            <p class="loading">Loading advertisement...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const showAdBtn = document.getElementById('showAdBtn');
+            const adContainer = document.getElementById('adContainer');
+            let adLoaded = false;
+            
+            showAdBtn.addEventListener('click', function() {
+                // Show the container
+                adContainer.style.display = 'block';
+                
+                // Only load the ad script once
+                if (!adLoaded) {
+                    loadMonetagAd();
+                    adLoaded = true;
+                    
+                    // Change button text after first click
+                    showAdBtn.textContent = 'Ads Loaded!';
+                    showAdBtn.style.background = 'linear-gradient(45deg, #2ecc71, #3498db)';
+                }
+            });
+            
+            function loadMonetagAd() {
+                // Create script element
+                const script = document.createElement('script');
+                script.src = '//whephiwums.com/sdk.js';
+                script.setAttribute('data-zone', '9271711');
+                script.setAttribute('data-sdk', 'show_9271711');
+                
+                // Error handling
+                script.onerror = function() {
+                    adContainer.innerHTML = '<p>Failed to load ad. Please try again later.</p>';
+                };
+                
+                // Append to container
+                adContainer.appendChild(script);
+                
+                // Optional: Track when ad is loaded
+                window.addEventListener('message', function(event) {
+                    if (event.data.monetagEvent) {
+                        console.log('Ad event:', event.data.monetagEvent);
+                    }
+                });
+            }
+            
+            // Telegram Web App integration
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tgWebApp = window.Telegram.WebApp;
+                
+                // Expand to full height
+                tgWebApp.expand();
+                
+                // Change button color to match Telegram's theme
+                if (tgWebApp.colorScheme === 'dark') {
+                    document.body.style.background = '#17212b';
+                    document.querySelector('.container').style.background = '#232e3c';
+                    document.querySelector('.container').style.color = 'white';
+                }
+                
+                // Send data to bot when ready
+                tgWebApp.ready();
+            }
+        });
+    </script>
+</body>
+</html>
