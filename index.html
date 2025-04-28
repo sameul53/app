@@ -1,149 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monetag Ad Controller</title>
+    <title>Ad Show App</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
+            font-family: Arial, sans-serif;
             text-align: center;
-        }
-        
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        
-        .btn {
-            background: linear-gradient(45deg, #3498db, #2ecc71);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            margin: 20px 0;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
-        .ad-container {
-            margin-top: 30px;
-            min-height: 100px;
-            border: 1px dashed #ccc;
-            border-radius: 10px;
             padding: 20px;
-            display: none;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        
-        .loading {
-            color: #7f8c8d;
-            font-style: italic;
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #rewardedBtn {
+            background: #4CAF50;
+            color: white;
+        }
+        #popupBtn {
+            background: #2196F3;
+            color: white;
+        }
+        #inAppBtn {
+            background: #FF9800;
+            color: white;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            min-height: 50px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Monetag Ad Controller</h1>
-        <p>Press the button below to show ads</p>
-        
-        <button id="showAdBtn" class="btn">Show Ads</button>
-        
-        <div id="adContainer" class="ad-container">
-            <p class="loading">Loading advertisement...</p>
-        </div>
-    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const showAdBtn = document.getElementById('showAdBtn');
-            const adContainer = document.getElementById('adContainer');
-            let adLoaded = false;
-            
-            showAdBtn.addEventListener('click', function() {
-                // Show the container
-                adContainer.style.display = 'block';
-                
-                // Only load the ad script once
-                if (!adLoaded) {
-                    loadMonetagAd();
-                    adLoaded = true;
-                    
-                    // Change button text after first click
-                    showAdBtn.textContent = 'Ads Loaded!';
-                    showAdBtn.style.background = 'linear-gradient(45deg, #2ecc71, #3498db)';
-                }
-            });
-            
-            function loadMonetagAd() {
-                // Create script element
-                const script = document.createElement('script');
-                script.src = '//whephiwums.com/sdk.js';
-                script.setAttribute('data-zone', '9271711');
-                script.setAttribute('data-sdk', 'show_9271711');
-                
-                // Error handling
-                script.onerror = function() {
-                    adContainer.innerHTML = '<p>Failed to load ad. Please try again later.</p>';
-                };
-                
-                // Append to container
-                adContainer.appendChild(script);
-                
-                // Optional: Track when ad is loaded
-                window.addEventListener('message', function(event) {
-                    if (event.data.monetagEvent) {
-                        console.log('Ad event:', event.data.monetagEvent);
-                    }
-                });
-            }
-            
-            // Telegram Web App integration
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tgWebApp = window.Telegram.WebApp;
-                
-                // Expand to full height
-                tgWebApp.expand();
-                
-                // Change button color to match Telegram's theme
-                if (tgWebApp.colorScheme === 'dark') {
-                    document.body.style.background = '#17212b';
-                    document.querySelector('.container').style.background = '#232e3c';
-                    document.querySelector('.container').style.color = 'white';
-                }
-                
-                // Send data to bot when ready
-                tgWebApp.ready();
-            }
+<h1>Choose Ad Format</h1>
+
+<button id="rewardedBtn">Show Rewarded Ad</button>
+<button id="popupBtn">Show Popup Ad</button>
+<button id="inAppBtn">Show In-App Ads</button>
+
+<div id="status">
+    <p>Select an ad format above. After watching, you'll get a reward!</p>
+</div>
+
+<script src="https://whephiwums.com/sdk.js" data-zone="9271711"></script>
+
+<script>
+    // Reward function (you can change this)
+    function giveReward() {
+        document.getElementById("status").innerHTML = 
+            "<p style='color:green'>🎉 Reward granted! Thanks for watching!</p>";
+    }
+
+    // Rewarded Interstitial
+    document.getElementById("rewardedBtn").onclick = function() {
+        document.getElementById("status").innerHTML = "<p>Loading rewarded ad...</p>";
+        show_9271711().then(() => {
+            giveReward();
         });
-    </script>
-    <script src='//whephiwums.com/sdk.js' data-zone='9271711' data-sdk='show_9271711'></script>
+    };
+
+    // Rewarded Popup
+    document.getElementById("popupBtn").onclick = function() {
+        document.getElementById("status").innerHTML = "<p>Loading popup ad...</p>";
+        show_9271711('pop').then(() => {
+            giveReward();
+        }).catch(e => {
+            document.getElementById("status").innerHTML = 
+                "<p style='color:red'>Ad failed to load. Please try again.</p>";
+        });
+    };
+
+    // In-App Interstitial (auto-shows based on settings)
+    document.getElementById("inAppBtn").onclick = function() {
+        document.getElementById("status").innerHTML = 
+            "<p>In-app ads activated! They'll show automatically with these settings:<br>" +
+            "• 2 ads every 6 minutes<br>" +
+            "• 30 seconds between ads<br>" +
+            "• 5 second delay before first ad</p>";
+        
+        show_9271711({ 
+            type: 'inApp', 
+            inAppSettings: { 
+                frequency: 2, 
+                capping: 0.1, 
+                interval: 30, 
+                timeout: 5, 
+                everyPage: false 
+            } 
+        });
+    };
+</script>
+
 </body>
 </html>
