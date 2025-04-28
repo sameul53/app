@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Telegram Ad Demo</title>
+    <title>Free Rewards Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <!-- Monetag Script -->
     <script src="https://whephiwums.com/sdk.js" data-zone="9271711" data-sdk="show_9271711"></script>
@@ -20,27 +20,38 @@
             border: none;
             font-size: 16px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .reward-btn {
             background: var(--tg-theme-button-color, #0088cc);
             color: var(--tg-theme-button-text-color, #ffffff);
         }
+        .btn-logo {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
-    <h2>Earn Money</h2>
+    <h2>Get Free Rewards</h2>
     
     <!-- Reward Options -->
     <button class="btn reward-btn" onclick="showRewardedAd()">
-        EarN 5 Taka By Bkash
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/BKash_logo.svg/1200px-BKash_logo.svg.png" class="btn-logo" alt="bKash">
+        Free 20 Taka in bKash
     </button>
     
     <button class="btn reward-btn" onclick="showContinueAd()">
-        Earn 10 Taka on NOGOD
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Nagad-Logo.wine.svg/1200px-Nagad-Logo.wine.svg.png" class="btn-logo" alt="Nagad">
+        Free 20 Taka in Nagad
     </button>
     
     <button class="btn reward-btn" onclick="showCurrencyAd()">
-        Free Mobail Recharge
+        <img src="https://cdn-icons-png.flaticon.com/512/217/217853.png" class="btn-logo" alt="Mobile">
+        Free Mobile Recharge
     </button>
 
     <script>
@@ -50,44 +61,26 @@
             Telegram.WebApp.ready();
         }
 
-        // Reward: 2x Booster
+        // Reward: bKash
         function showRewardedAd() {
             show_9271711('preload').then(() => {
                 show_9271711('pop');
-                grantReward('booster');
             }).catch(handleAdError);
         }
 
-        // Reward: Extra Life
+        // Reward: Nagad
         function showContinueAd() {
-            show_9271711().then(() => {
-                grantReward('extra_life');
-            }).catch(handleAdError);
+            show_9271711().catch(handleAdError);
         }
 
-        // Reward: Game Currency
+        // Reward: Mobile Recharge
         function showCurrencyAd() {
-            show_9271711().then(() => {
-                grantReward('coins', 50);
-            }).catch(handleAdError);
-        }
-
-     
-            
-            alert(rewards[type]);
-            
-            // Send to Telegram bot
-            if (window.Telegram?.WebApp) {
-                Telegram.WebApp.sendData(JSON.stringify({
-                    reward_type: type,
-                    amount: amount
-                }));
-            }
+            show_9271711().catch(handleAdError);
         }
 
         function handleAdError(error) {
             console.error("Ad error:", error);
-            alert("Ad unavailable. Please try again later.");
+            alert("Reward unavailable. Please try again later.");
         }
     </script>
 </body>
