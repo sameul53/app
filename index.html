@@ -1,34 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Ad Button</title>
+    <title>Mobile Ad Button</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://whephiwums.com">
     <style>
-        body { text-align: center; padding: 40px; }
+        body { 
+            text-align: center; 
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
         button {
             padding: 15px 30px;
             background: #0088cc;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             font-size: 18px;
             cursor: pointer;
+            width: 80%;
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Click to Show Ad</h1>
+    <h1>Watch Ad for Reward</h1>
     <button id="adBtn">SHOW AD</button>
     
     <script>
+        // Telegram WebApp detection
+        if (window.Telegram?.WebApp) {
+            Telegram.WebApp.expand();
+            Telegram.WebApp.ready();
+            document.body.style.backgroundColor = Telegram.WebApp.colorScheme === 'dark' ? '#17212b' : '';
+        }
+
         document.getElementById("adBtn").onclick = function() {
+            this.disabled = true;
+            this.textContent = "Loading ad...";
+            
             if (!window.show_9271711) {
                 const script = document.createElement("script");
                 script.src = "https://whephiwums.com/sdk.js";
                 script.dataset.zone = "9271711";
                 script.dataset.sdk = "show_9271711";
-                document.body.appendChild(script);
+                
+                const timeout = setTimeout(() => {
+                    alert("Connection slow - please wait");
+                }, 3000);
+                
+                script.onload = () => {
+                    clearTimeout(timeout);
+                    runAd();
+                };
+                
+                script.onerror = () => {
+                    clearTimeout(timeout);
+                    alert("Ad system unavailable");
+                    this.disabled = false;
+                    this.textContent = "TRY AGAIN";
+                };
+                
+                document.head.appendChild(script);
+            } else {
+                runAd();
             }
-            show_9271711().then(() => alert("Thank you!"));
+            
+            function runAd() {
+                show_9271711()
+                    .then(() => {
+                        alert("Thank you! Reward activated.");
+                        if (window.Telegram?.WebApp) {
+                            Telegram.WebApp.sendData(JSON.stringify({ reward: true }));
+                        }
+                    })
+                    .catch(e => {
+                        console.error("Ad error:", e);
+                        alert("Couldn't show ad. Try later.");
+                    })
+                    .finally(() => {
+                        this.disabled = false;
+                        this.textContent = "SHOW AD";
+                    });
+            }
         };
     </script>
 </body>
