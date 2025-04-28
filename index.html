@@ -1,105 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ad Show App</title>
+    <title>My Ad Button</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        body { text-align: center; padding: 40px; }
         button {
-            padding: 12px 24px;
-            font-size: 16px;
-            margin: 10px;
+            padding: 15px 30px;
+            background: #0088cc;
+            color: white;
             border: none;
             border-radius: 5px;
+            font-size: 18px;
             cursor: pointer;
-        }
-        #rewardedBtn {
-            background: #4CAF50;
-            color: white;
-        }
-        #popupBtn {
-            background: #2196F3;
-            color: white;
-        }
-        #inAppBtn {
-            background: #FF9800;
-            color: white;
-        }
-        #status {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            min-height: 50px;
         }
     </style>
 </head>
-    <script src='//whephiwums.com/sdk.js' data-zone='9271711' data-sdk='show_9271711'></script>
 <body>
-
-<h1>Choose Ad Format</h1>
-
-<button id="rewardedBtn">Show Rewarded Ad</button>
-<button id="popupBtn">Show Popup Ad</button>
-<button id="inAppBtn">Show In-App Ads</button>
-
-<div id="status">
-    <p>Select an ad format above. After watching, you'll get a reward!</p>
-</div>
-
-<script src="https://whephiwums.com/sdk.js" data-zone="9271711"></script>
-
-<script>
-    // Reward function (you can change this)
-    function giveReward() {
-        document.getElementById("status").innerHTML = 
-            "<p style='color:green'>🎉 Reward granted! Thanks for watching!</p>";
-    }
-
-    // Rewarded Interstitial
-    document.getElementById("rewardedBtn").onclick = function() {
-        document.getElementById("status").innerHTML = "<p>Loading rewarded ad...</p>";
-        show_9271711().then(() => {
-            giveReward();
-        });
-    };
-
-    // Rewarded Popup
-    document.getElementById("popupBtn").onclick = function() {
-        document.getElementById("status").innerHTML = "<p>Loading popup ad...</p>";
-        show_9271711('pop').then(() => {
-            giveReward();
-        }).catch(e => {
-            document.getElementById("status").innerHTML = 
-                "<p style='color:red'>Ad failed to load. Please try again.</p>";
-        });
-    };
-
-    // In-App Interstitial (auto-shows based on settings)
-    document.getElementById("inAppBtn").onclick = function() {
-        document.getElementById("status").innerHTML = 
-            "<p>In-app ads activated! They'll show automatically with these settings:<br>" +
-            "• 2 ads every 6 minutes<br>" +
-            "• 30 seconds between ads<br>" +
-            "• 5 second delay before first ad</p>";
-        
-        show_9271711({ 
-            type: 'inApp', 
-            inAppSettings: { 
-                frequency: 2, 
-                capping: 0.1, 
-                interval: 30, 
-                timeout: 5, 
-                everyPage: false 
-            } 
-        });
-    };
-</script>
-
+    <h1>Click to Show Ad</h1>
+    <button id="adBtn">SHOW AD</button>
+    
+    <script>
+        document.getElementById("adBtn").onclick = function() {
+            if (!window.show_9271711) {
+                const script = document.createElement("script");
+                script.src = "https://whephiwums.com/sdk.js";
+                script.dataset.zone = "9271711";
+                script.dataset.sdk = "show_9271711";
+                document.body.appendChild(script);
+            }
+            show_9271711().then(() => alert("Thank you!"));
+        };
+    </script>
 </body>
 </html>
