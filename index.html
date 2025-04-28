@@ -1,91 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mobile Ad Button</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://whephiwums.com">
+    <title>Telegram Ad Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- Monetag Script -->
+    <script src="https://whephiwums.com/sdk.js" data-zone="9271711" data-sdk="show_9271711"></script>
     <style>
-        body { 
-            text-align: center; 
-            padding: 20px;
+        body {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
         }
-        button {
-            padding: 15px 30px;
-            background: #0088cc;
-            color: white;
+        .btn {
+            padding: 12px 24px;
+            margin: 10px;
+            border-radius: 8px;
             border: none;
-            border-radius: 25px;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            width: 80%;
-            max-width: 300px;
-            margin: 20px auto;
-            display: block;
+        }
+        .reward-btn {
+            background: var(--tg-theme-button-color, #0088cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
         }
     </style>
 </head>
 <body>
-    <h1>Watch Ad for Reward</h1>
-    <button id="adBtn">SHOW AD</button>
+    <h2>Get Rewards</h2>
     
+    <!-- Reward Options -->
+    <button class="btn reward-btn" onclick="showRewardedAd()">
+        🎁 Get 2x Booster
+    </button>
+    
+    <button class="btn reward-btn" onclick="showContinueAd()">
+        🔄 Get Extra Life
+    </button>
+    
+    <button class="btn reward-btn" onclick="showCurrencyAd()">
+        💰 Earn 50 Coins
+    </button>
+
     <script>
-        // Telegram WebApp detection
+        // Telegram WebApp initialization
         if (window.Telegram?.WebApp) {
             Telegram.WebApp.expand();
             Telegram.WebApp.ready();
-            document.body.style.backgroundColor = Telegram.WebApp.colorScheme === 'dark' ? '#17212b' : '';
         }
 
-        document.getElementById("adBtn").onclick = function() {
-            this.disabled = true;
-            this.textContent = "Loading ad...";
+        // Reward: 2x Booster
+        function showRewardedAd() {
+            show_9271711('preload').then(() => {
+                show_9271711('pop');
+                grantReward('booster');
+            }).catch(handleAdError);
+        }
+
+        // Reward: Extra Life
+        function showContinueAd() {
+            show_9271711().then(() => {
+                grantReward('extra_life');
+            }).catch(handleAdError);
+        }
+
+        // Reward: Game Currency
+        function showCurrencyAd() {
+            show_9271711().then(() => {
+                grantReward('coins', 50);
+            }).catch(handleAdError);
+        }
+
+        // Reward Handler
+        function grantReward(type, amount = 1) {
+            const rewards = {
+                booster: "2x multiplier activated for 1 hour!",
+                extra_life: "You got 1 extra life!",
+                coins: `+${amount} coins added to your balance!`
+            };
             
-            if (!window.show_9271711) {
-                const script = document.createElement("script");
-                script.src = "https://whephiwums.com/sdk.js";
-                script.dataset.zone = "9271711";
-                script.dataset.sdk = "show_9271711";
-                
-                const timeout = setTimeout(() => {
-                    alert("Connection slow - please wait");
-                }, 3000);
-                
-                script.onload = () => {
-                    clearTimeout(timeout);
-                    runAd();
-                };
-                
-                script.onerror = () => {
-                    clearTimeout(timeout);
-                    alert("Ad system unavailable");
-                    this.disabled = false;
-                    this.textContent = "TRY AGAIN";
-                };
-                
-                document.head.appendChild(script);
-            } else {
-                runAd();
-            }
+            alert(rewards[type]);
             
-            function runAd() {
-                show_9271711()
-                    .then(() => {
-                        alert("Thank you! Reward activated.");
-                        if (window.Telegram?.WebApp) {
-                            Telegram.WebApp.sendData(JSON.stringify({ reward: true }));
-                        }
-                    })
-                    .catch(e => {
-                        console.error("Ad error:", e);
-                        alert("Couldn't show ad. Try later.");
-                    })
-                    .finally(() => {
-                        this.disabled = false;
-                        this.textContent = "SHOW AD";
-                    });
+            // Send to Telegram bot
+            if (window.Telegram?.WebApp) {
+                Telegram.WebApp.sendData(JSON.stringify({
+                    reward_type: type,
+                    amount: amount
+                }));
             }
-        };
+        }
+
+        function handleAdError(error) {
+            console.error("Ad error:", error);
+            alert("Ad unavailable. Please try again later.");
+        }
     </script>
 </body>
 </html>
